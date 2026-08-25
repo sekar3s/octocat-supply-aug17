@@ -23,7 +23,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 
 const STAR_RATINGS = [1, 2, 3, 4, 5] as const;
 const STAR_BUTTON_BASE_CLASSES =
-  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red-700 peer-focus-visible:ring-4 peer-focus-visible:ring-red-500 group-hover:scale-125 group-hover:rotate-6 group-hover:shadow-red-500/60 motion-safe:group-hover:animate-bounce group-active:scale-110';
+  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red-700 peer-focus-visible:ring-4 peer-focus-visible:ring-red-500 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110';
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
@@ -209,12 +209,12 @@ export default function Products() {
                       >
                         <legend className="sr-only">Rate {product.name}</legend>
                         {STAR_RATINGS.map((rating) => {
-                          const isSelected = rating <= currentRating;
+                          const isFilled = rating <= currentRating;
 
                           return (
                             <label
                               key={rating}
-                              className="group cursor-pointer"
+                              className="cursor-pointer"
                             >
                               <input
                                 type="radio"
@@ -223,12 +223,12 @@ export default function Products() {
                                 checked={currentRating === rating}
                                 onChange={() => handleRatingChange(product.productId, rating)}
                                 className="peer sr-only"
-                                aria-label={`Rate ${product.name} ${rating} ${rating === 1 ? 'star' : 'stars'}`}
+                                aria-label={`Select ${rating}-star rating for ${product.name}`}
                               />
                               <span
-                                className={`${STAR_BUTTON_BASE_CLASSES} ${isSelected
+                                className={`${STAR_BUTTON_BASE_CLASSES} ${isFilled
                                   ? 'bg-red-600 text-white shadow-red-500/60 ring-2 ring-red-300'
-                                  : 'bg-red-100 text-red-600 group-hover:bg-red-600 group-hover:text-white'
+                                  : 'bg-red-100 text-red-600 hover:bg-red-600 hover:text-white'
                                 }`}
                                 aria-hidden="true"
                               >
