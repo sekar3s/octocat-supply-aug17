@@ -212,12 +212,12 @@ export default function Products() {
                               key={rating}
                               type="button"
                               onClick={() => handleRatingChange(product.productId, rating)}
-                              className={`w-11 h-11 rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-red-300 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110 ${isSelected
+                              className={`w-11 h-11 rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 focus-visible:ring-4 focus-visible:ring-red-500 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110 ${isSelected
                                 ? 'bg-red-600 text-white animate-pulse'
                                 : 'bg-red-100 text-red-600 hover:bg-red-600 hover:text-white'
                                 }`}
                               aria-label={`Rate ${product.name} ${rating} ${rating === 1 ? 'star' : 'stars'}`}
-                              aria-pressed={currentRating === rating}
+                              aria-pressed={isSelected}
                             >
                               <span aria-hidden="true">★</span>
                             </button>
