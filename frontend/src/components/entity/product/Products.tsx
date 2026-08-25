@@ -23,7 +23,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 
 const STAR_RATINGS = [1, 2, 3, 4, 5] as const;
 const STAR_BUTTON_BASE_CLASSES =
-  'w-11 h-11 rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 focus-visible:ring-4 focus-visible:ring-red-500 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 hover:motion-safe:animate-bounce active:scale-110';
+  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red-700 peer-focus-visible:ring-4 peer-focus-visible:ring-red-500 group-hover:scale-125 group-hover:rotate-6 group-hover:shadow-red-500/60 motion-safe:group-hover:animate-bounce group-active:scale-110';
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
@@ -203,36 +203,44 @@ export default function Products() {
                       {product.description}
                     </p>
                     <div className="space-y-4 mt-auto">
-                      <div
+                      <fieldset
                         className="flex flex-wrap items-center gap-2"
-                        role="radiogroup"
-                        aria-label={`Rate ${product.name}`}
                         aria-describedby={`rating-status-${product.productId}`}
                       >
+                        <legend className="sr-only">Rate {product.name}</legend>
                         {STAR_RATINGS.map((rating) => {
                           const isSelected = rating <= currentRating;
 
                           return (
-                            <button
+                            <label
                               key={rating}
-                              type="button"
-                              role="radio"
-                              onClick={() => handleRatingChange(product.productId, rating)}
-                              className={`${STAR_BUTTON_BASE_CLASSES} ${isSelected
-                                ? 'bg-red-600 text-white shadow-red-500/60 ring-2 ring-red-300'
-                                : 'bg-red-100 text-red-600 hover:bg-red-600 hover:text-white'
-                                }`}
-                              aria-label={`Rate ${product.name} ${rating} ${rating === 1 ? 'star' : 'stars'}`}
-                              aria-checked={currentRating === rating}
+                              className="group cursor-pointer"
                             >
-                              <span aria-hidden="true">★</span>
-                            </button>
+                              <input
+                                type="radio"
+                                name={`rating-${product.productId}`}
+                                value={rating}
+                                checked={currentRating === rating}
+                                onChange={() => handleRatingChange(product.productId, rating)}
+                                className="peer sr-only"
+                                aria-label={`Rate ${product.name} ${rating} ${rating === 1 ? 'star' : 'stars'}`}
+                              />
+                              <span
+                                className={`${STAR_BUTTON_BASE_CLASSES} ${isSelected
+                                  ? 'bg-red-600 text-white shadow-red-500/60 ring-2 ring-red-300'
+                                  : 'bg-red-100 text-red-600 group-hover:bg-red-600 group-hover:text-white'
+                                }`}
+                                aria-hidden="true"
+                              >
+                                ★
+                              </span>
+                            </label>
                           );
                         })}
                         <span id={`rating-status-${product.productId}`} className="sr-only">
                           Current rating: {currentRating || 'none'} out of 5 stars
                         </span>
-                      </div>
+                      </fieldset>
 
                       <div className="flex justify-between items-center">
                         {hasDiscount ? (
