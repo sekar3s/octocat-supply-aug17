@@ -23,6 +23,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [productRatings, setProductRatings] = useState<Record<number, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -59,6 +60,13 @@ export default function Products() {
         [productId]: 0,
       }));
     }
+  };
+
+  const handleRatingChange = (productId: number, rating: number) => {
+    setProductRatings((prev) => ({
+      ...prev,
+      [productId]: rating,
+    }));
   };
 
   const handleProductClick = (product: Product) => {
@@ -157,6 +165,7 @@ export default function Products() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts?.map((product) => {
               const hasDiscount = product.discount != null && product.discount > 0;
+              const currentRating = productRatings[product.productId] || 0;
               return (
                 <div
                   key={product.productId}
@@ -179,77 +188,103 @@ export default function Products() {
                   </div>
 
                   <div className="p-4 flex flex-col flex-grow">
-                  <h3
-                    className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}
-                  >
-                    {product.name}
-                  </h3>
-                  <p
-                    className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 flex-grow transition-colors duration-300`}
-                  >
-                    {product.description}
-                  </p>
-                  <div className="space-y-4 mt-auto">
-                    <div className="flex justify-between items-center">
-                      {hasDiscount ? (
-                        <div>
-                          <span className="text-gray-500 line-through text-sm mr-2">
+                    <h3
+                      className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}
+                    >
+                      {product.name}
+                    </h3>
+                    <p
+                      className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 flex-grow transition-colors duration-300`}
+                    >
+                      {product.description}
+                    </p>
+                    <div className="space-y-4 mt-auto">
+                      <div
+                        className="flex flex-wrap items-center gap-2"
+                        role="group"
+                        aria-label={`Rate ${product.name}`}
+                      >
+                        {[1, 2, 3, 4, 5].map((rating) => {
+                          const isSelected = rating <= currentRating;
+
+                          return (
+                            <button
+                              key={rating}
+                              type="button"
+                              onClick={() => handleRatingChange(product.productId, rating)}
+                              className={`w-11 h-11 rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-red-300 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110 ${isSelected
+                                ? 'bg-red-600 text-white animate-pulse'
+                                : 'bg-red-100 text-red-600 hover:bg-red-600 hover:text-white'
+                                }`}
+                              aria-label={`Rate ${product.name} ${rating} ${rating === 1 ? 'star' : 'stars'}`}
+                              aria-pressed={currentRating === rating}
+                            >
+                              <span aria-hidden="true">★</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        {hasDiscount ? (
+                          <div>
+                            <span className="text-gray-500 line-through text-sm mr-2">
+                              ${product.price.toFixed(2)}
+                            </span>
+                            <span className="text-primary text-xl font-bold">
+                              ${(product.price * (1 - product.discount!)).toFixed(2)}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-primary text-xl font-bold">
                             ${product.price.toFixed(2)}
                           </span>
-                          <span className="text-primary text-xl font-bold">
-                            ${(product.price * (1 - product.discount!)).toFixed(2)}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-primary text-xl font-bold">
-                          ${product.price.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
+                        )}
+                      </div>
 
-                    <div className="flex items-center justify-between">
-                      <div
-                        className={`flex items-center space-x-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-lg p-1 transition-colors duration-300`}
-                      >
+                      <div className="flex items-center justify-between">
+                        <div
+                          className={`flex items-center space-x-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-lg p-1 transition-colors duration-300`}
+                        >
+                          <button
+                            onClick={() => handleQuantityChange(product.productId, -1)}
+                            className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
+                            aria-label={`Decrease quantity of ${product.name}`}
+                            id={`decrease-qty-${product.productId}`}
+                          >
+                            <span aria-hidden="true">-</span>
+                          </button>
+                          <span
+                            className={`${darkMode ? 'text-light' : 'text-gray-800'} min-w-[2rem] text-center transition-colors duration-300`}
+                            aria-label={`Quantity of ${product.name}`}
+                            id={`qty-${product.productId}`}
+                          >
+                            {quantities[product.productId] || 0}
+                          </span>
+                          <button
+                            onClick={() => handleQuantityChange(product.productId, 1)}
+                            className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
+                            aria-label={`Increase quantity of ${product.name}`}
+                            id={`increase-qty-${product.productId}`}
+                          >
+                            <span aria-hidden="true">+</span>
+                          </button>
+                        </div>
                         <button
-                          onClick={() => handleQuantityChange(product.productId, -1)}
-                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
-                          aria-label={`Decrease quantity of ${product.name}`}
-                          id={`decrease-qty-${product.productId}`}
+                          onClick={() => handleAddToCart(product.productId)}
+                          className={`px-4 py-2 rounded-lg transition-colors ${quantities[product.productId]
+                            ? 'bg-primary hover:bg-accent text-white'
+                            : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
+                            }`}
+                          disabled={!quantities[product.productId]}
+                          aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
+                          id={`add-to-cart-${product.productId}`}
                         >
-                          <span aria-hidden="true">-</span>
-                        </button>
-                        <span
-                          className={`${darkMode ? 'text-light' : 'text-gray-800'} min-w-[2rem] text-center transition-colors duration-300`}
-                          aria-label={`Quantity of ${product.name}`}
-                          id={`qty-${product.productId}`}
-                        >
-                          {quantities[product.productId] || 0}
-                        </span>
-                        <button
-                          onClick={() => handleQuantityChange(product.productId, 1)}
-                          className={`w-8 h-8 flex items-center justify-center ${darkMode ? 'text-light' : 'text-gray-700'} hover:text-primary transition-colors duration-300`}
-                          aria-label={`Increase quantity of ${product.name}`}
-                          id={`increase-qty-${product.productId}`}
-                        >
-                          <span aria-hidden="true">+</span>
+                          Add to Cart
                         </button>
                       </div>
-                      <button
-                        onClick={() => handleAddToCart(product.productId)}
-                        className={`px-4 py-2 rounded-lg transition-colors ${quantities[product.productId]
-                          ? 'bg-primary hover:bg-accent text-white'
-                          : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
-                          }`}
-                        disabled={!quantities[product.productId]}
-                        aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
-                        id={`add-to-cart-${product.productId}`}
-                      >
-                        Add to Cart
-                      </button>
                     </div>
                   </div>
-                </div>
                 </div>
               );
             })}
