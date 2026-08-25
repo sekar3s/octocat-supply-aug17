@@ -23,7 +23,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 
 const STAR_RATINGS = [1, 2, 3, 4, 5] as const;
 const STAR_BUTTON_BASE_CLASSES =
-  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red-700 peer-focus-visible:ring-4 peer-focus-visible:ring-red-500 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110';
+  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 group-focus-within:outline group-focus-within:outline-2 group-focus-within:outline-offset-2 group-focus-within:outline-red-700 group-focus-within:ring-4 group-focus-within:ring-red-500 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110';
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
@@ -214,7 +214,7 @@ export default function Products() {
                           return (
                             <label
                               key={rating}
-                              className="cursor-pointer"
+                              className="group cursor-pointer"
                             >
                               <input
                                 type="radio"
@@ -222,7 +222,7 @@ export default function Products() {
                                 value={rating}
                                 checked={currentRating === rating}
                                 onChange={() => handleRatingChange(product.productId, rating)}
-                                className="peer sr-only"
+                                className="sr-only"
                                 aria-label={`Select ${rating}-star rating for ${product.name}`}
                               />
                               <span
@@ -237,10 +237,10 @@ export default function Products() {
                             </label>
                           );
                         })}
-                        <span id={`rating-status-${product.productId}`} className="sr-only">
-                          Current rating: {currentRating || 'none'} out of 5 stars
-                        </span>
                       </fieldset>
+                      <span id={`rating-status-${product.productId}`} className="sr-only">
+                        Current rating: {currentRating || 'none'} out of 5 stars
+                      </span>
 
                       <div className="flex justify-between items-center">
                         {hasDiscount ? (
