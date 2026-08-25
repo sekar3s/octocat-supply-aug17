@@ -203,6 +203,13 @@ export default function Products() {
                       {product.description}
                     </p>
                     <div className="space-y-4 mt-auto">
+                      <span
+                        id={`rating-status-${product.productId}`}
+                        className="sr-only"
+                        aria-live="polite"
+                      >
+                        Current rating: {currentRating || 'none'} out of 5 stars
+                      </span>
                       <fieldset
                         className="flex flex-wrap items-center gap-2"
                         aria-describedby={`rating-status-${product.productId}`}
@@ -238,9 +245,6 @@ export default function Products() {
                           );
                         })}
                       </fieldset>
-                      <span id={`rating-status-${product.productId}`} className="sr-only">
-                        Current rating: {currentRating || 'none'} out of 5 stars
-                      </span>
 
                       <div className="flex justify-between items-center">
                         {hasDiscount ? (
