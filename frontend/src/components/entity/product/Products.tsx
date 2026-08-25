@@ -23,7 +23,7 @@ const fetchProducts = async (): Promise<Product[]> => {
 
 const STAR_RATINGS = [1, 2, 3, 4, 5] as const;
 const STAR_BUTTON_BASE_CLASSES =
-  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 group-focus-within:outline group-focus-within:outline-2 group-focus-within:outline-offset-2 group-focus-within:outline-red-700 group-focus-within:ring-4 group-focus-within:ring-red-500 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110';
+  'inline-flex w-11 h-11 items-center justify-center rounded-full border-2 border-red-600 text-2xl leading-none shadow-lg transition-all duration-200 group-focus-within:outline group-focus-within:outline-2 group-focus-within:outline-offset-4 group-focus-within:outline-white group-focus-within:ring-4 group-focus-within:ring-red-700 hover:scale-125 hover:rotate-6 hover:shadow-red-500/60 active:scale-110';
 
 export default function Products() {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
@@ -208,7 +208,7 @@ export default function Products() {
                         className="sr-only"
                         aria-live="polite"
                       >
-                        Current rating: {currentRating || 'none'} out of 5 stars
+                        {currentRating > 0 ? `Current rating: ${currentRating} out of 5 stars` : ''}
                       </span>
                       <fieldset
                         className="flex flex-wrap items-center gap-2"
